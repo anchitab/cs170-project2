@@ -36,7 +36,7 @@ def main():
     total_features = len(values[0])
 
     print(f'This dataset has {total_features} features (not including the class attribute), with {len(values)} instances.\n')
-    initial_accuracy = leave_one_out_accuracy(labels, values, set(range(1, total_features + 1)))
+    initial_accuracy = round(leave_one_out_accuracy(labels, values, set(range(1, total_features + 1))), 2)
     print(f'Running nearest neighbors with all {total_features} features, using \"leave-one-out\" accuracy, ' + 
    f'I get an accuracy of {initial_accuracy*100}%')
 
@@ -70,6 +70,7 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
             vec_j = [vec_j[ind] for ind in range(len(vec_j)) if (ind+1 in features or ind+1 == feature_to_add)]
             vec_j = np.array(vec_j)
 
+            # Euclidean distance between vec_i and vec_j
             distance = np.linalg.norm(vec_i - vec_j)
             if distance < nearest_neighbor_val:
                 nearest_neighbor_index = j
@@ -93,8 +94,9 @@ def forward_selection():
         for feature in range(1, total_features + 1):
             if feature in feature_set:
                 continue
+
             new_accuracy = leave_one_out_accuracy(labels, values, feature_set, feature)
-            print(f'Using feature(s) {feature_set.union({feature})}: accuracy is {new_accuracy*100}%')
+            print(f'Using feature(s) {feature_set.union({feature})}: accuracy is {round(new_accuracy*100, 2)}%')
 
             if new_accuracy > best_accuracy:
                 best_accuracy = new_accuracy
@@ -104,11 +106,11 @@ def forward_selection():
             best_set_accuracy = best_accuracy
             best_feature_set = feature_set.union({best_feature})
     
-        print(f'Best feature was {best_feature} with accuracy {best_accuracy * 100}%')
+        print(f'Best feature was {best_feature} with accuracy {round(best_accuracy*100, 2)}%')
         print('\n')
         feature_set = feature_set.union({best_feature})
     
-    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {best_set_accuracy * 100}%')
+    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 2)}%')
 
 def backward_elimination():
     feature_set = set(range(1, total_features + 1))
@@ -116,7 +118,7 @@ def backward_elimination():
     # Different from forward selection, have to check the accuracy of the full set first before eliminating any features
     best_feature_set = feature_set
     best_set_accuracy = leave_one_out_accuracy(labels, values, feature_set)
-    print(f'Feature set {feature_set} has accuracy {best_set_accuracy*100}%')
+    print(f'Feature set {feature_set} has accuracy {round(best_set_accuracy*100, 2)}%')
 
     # Don't want to run the loop if only one feature left, we'd only be checking accuracy of an empty feature set!
     while len(feature_set) > 1:            
@@ -124,7 +126,7 @@ def backward_elimination():
         best_feature = None
         for feature in feature_set:
             new_accuracy = leave_one_out_accuracy(labels, values, feature_set - {feature})
-            print(f'Using feature(s) {feature_set - {feature}}: accuracy is {new_accuracy*100}%')
+            print(f'Using feature(s) {feature_set - {feature}}: accuracy is {round(new_accuracy*100, 2)}%')
 
             if new_accuracy > best_accuracy:
                 best_accuracy = new_accuracy
@@ -134,11 +136,12 @@ def backward_elimination():
             best_set_accuracy = best_accuracy
             best_feature_set = feature_set - {best_feature}
     
-        print(f'Best feature to remove was {best_feature} with accuracy {best_accuracy * 100}%')
+        print(f'Best feature to remove was {best_feature} with accuracy {round(best_accuracy * 100, 2)}%')
         print('\n')
         feature_set = feature_set - {best_feature}
     
-    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {best_set_accuracy * 100}%')
+    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 2)}%')
+
 
 main()
 
