@@ -20,12 +20,30 @@ def read_file(file_name):
     return labels, values
 
 def main():
-    file_name = 'CS170_Large_Data__6.txt'
+    print('Welcome to Anchita Bora\'s Feature Selection Algorithm')
+    print('Type in the file name to test: ')
+    file_name = input().strip()
+    print('\n')
+    print('Enter the number of the algorithm you want to run.\n')
+    print('1) Forward Selection\n')
+    print('2) Backward Elimination\n')
+    algorithm = input().strip()
+    if algorithm not in {'1', '2'}:
+        print('Invalid algorithm input, Exiting.')
+        return        
     global labels, values, total_features
     labels, values = read_file(file_name)
     total_features = len(values[0])
 
-    backward_elimination()
+    print(f'This dataset has {total_features} features (not including the class attribute), with {len(values)} instances.\n')
+    initial_accuracy = leave_one_out_accuracy(labels, values, set(range(1, total_features + 1)))
+    print(f'Running nearest neighbors with all {total_features} features, using \"leave-one-out\" accuracy, ' + 
+   'I get an accuracy of {initial_accuracy*100}%')
+
+    if algorithm == '1':
+        forward_selection()
+    else:
+        backward_elimination()
 
 def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
     num_correct = 0
