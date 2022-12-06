@@ -38,7 +38,7 @@ def main():
     print(f'This dataset has {total_features} features (not including the class attribute), with {len(values)} instances.\n')
     initial_accuracy = leave_one_out_accuracy(labels, values, set(range(1, total_features + 1)))
     print(f'Running nearest neighbors with all {total_features} features, using \"leave-one-out\" accuracy, ' + 
-   'I get an accuracy of {initial_accuracy*100}%')
+   f'I get an accuracy of {initial_accuracy*100}%')
 
     if algorithm == '1':
         forward_selection()
