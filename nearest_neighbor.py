@@ -26,7 +26,7 @@ def main():
     total_features = len(values[0])
 
     # print(leave_one_out_accuracy(labels, values, list(range(1, len(values[0])+1))))
-    forward_elimination()
+    backward_elimination()
 
 def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
     num_correct = 0
@@ -65,7 +65,7 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
     return random.random()
     # return num_correct / len(values)
 
-def forward_elimination():
+def forward_selection():
     feature_set = set()
     best_feature_set = None
     best_set_accuracy = float('-inf')
@@ -89,6 +89,36 @@ def forward_elimination():
     
         print(f'Best feature was {best_feature} with accuracy {best_accuracy * 100}%')
         feature_set = feature_set.union({best_feature})
+    
+    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {best_set_accuracy * 100}%')
+
+def backward_elimination():
+    feature_set = set(range(1, total_features + 1))
+
+    # Different from forward selection, have to check the accuracy of the full set first before eliminating any features
+    best_feature_set = feature_set
+    best_set_accuracy = leave_one_out_accuracy(labels, values, feature_set)
+    print(f'Feature set {feature_set} has accuracy {best_set_accuracy*100}%')
+
+    # Don't want to run the loop if only one feature left, we'd only be checking accuracy of an empty feature set!
+    while len(feature_set) > 1:            
+        best_accuracy = float('-inf')
+        best_feature = None
+        for feature in feature_set:
+            new_accuracy = leave_one_out_accuracy(labels, values, feature_set - {feature})
+            print(f'Using feature(s) {feature_set - {feature}}: accuracy is {new_accuracy*100}%')
+
+            if new_accuracy > best_accuracy:
+                best_accuracy = new_accuracy
+                best_feature = feature
+
+        if best_accuracy > best_set_accuracy:
+            best_set_accuracy = best_accuracy
+            best_feature_set = feature_set - {best_feature}
+    
+        print(f'Best feature to remove was {best_feature} with accuracy {best_accuracy * 100}%')
+        print('\n')
+        feature_set = feature_set - {best_feature}
     
     print(f'Finished search! Best feature set was {best_feature_set} with accuracy {best_set_accuracy * 100}%')
 
