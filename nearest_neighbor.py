@@ -20,12 +20,11 @@ def read_file(file_name):
     return labels, values
 
 def main():
-    file_name = 'test_data.txt'
+    file_name = 'CS170_Large_Data__6.txt'
     global labels, values, total_features
     labels, values = read_file(file_name)
     total_features = len(values[0])
 
-    # print(leave_one_out_accuracy(labels, values, list(range(1, len(values[0])+1))))
     backward_elimination()
 
 def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
@@ -62,8 +61,8 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
         if predict_label == label_i:
             num_correct += 1
     
-    return random.random()
-    # return num_correct / len(values)
+    # return random.random()
+    return num_correct / len(values)
 
 def forward_selection():
     feature_set = set()
@@ -88,6 +87,7 @@ def forward_selection():
             best_feature_set = feature_set.union({best_feature})
     
         print(f'Best feature was {best_feature} with accuracy {best_accuracy * 100}%')
+        print('\n')
         feature_set = feature_set.union({best_feature})
     
     print(f'Finished search! Best feature set was {best_feature_set} with accuracy {best_set_accuracy * 100}%')
