@@ -1,5 +1,7 @@
 import numpy as np
 import random
+import time
+import json
 
 labels = None
 values = None
@@ -36,7 +38,7 @@ def main():
     total_features = len(values[0])
 
     print(f'This dataset has {total_features} features (not including the class attribute), with {len(values)} instances.\n')
-    initial_accuracy = round(leave_one_out_accuracy(labels, values, set(range(1, total_features + 1))), 2)
+    initial_accuracy = round(leave_one_out_accuracy(labels, values, set(range(1, total_features + 1))), 3)
     print(f'Running nearest neighbors with all {total_features} features, using \"leave-one-out\" accuracy, ' + 
    f'I get an accuracy of {initial_accuracy*100}%')
 
@@ -96,7 +98,7 @@ def forward_selection():
                 continue
 
             new_accuracy = leave_one_out_accuracy(labels, values, feature_set, feature)
-            print(f'Using feature(s) {feature_set.union({feature})}: accuracy is {round(new_accuracy*100, 2)}%')
+            print(f'Using feature(s) {feature_set.union({feature})}: accuracy is {round(new_accuracy*100, 3)}%')
 
             if new_accuracy > best_accuracy:
                 best_accuracy = new_accuracy
@@ -106,11 +108,11 @@ def forward_selection():
             best_set_accuracy = best_accuracy
             best_feature_set = feature_set.union({best_feature})
     
-        print(f'Best feature was {best_feature} with accuracy {round(best_accuracy*100, 2)}%')
+        print(f'Best feature was {best_feature} with accuracy {round(best_accuracy*100, 3)}%')
         print('\n')
         feature_set = feature_set.union({best_feature})
     
-    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 2)}%')
+    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 3)}%')
 
 def backward_elimination():
     feature_set = set(range(1, total_features + 1))
@@ -118,7 +120,7 @@ def backward_elimination():
     # Different from forward selection, have to check the accuracy of the full set first before eliminating any features
     best_feature_set = feature_set
     best_set_accuracy = leave_one_out_accuracy(labels, values, feature_set)
-    print(f'Feature set {feature_set} has accuracy {round(best_set_accuracy*100, 2)}%')
+    print(f'Feature set {feature_set} has accuracy {round(best_set_accuracy*100, 3)}%')
 
     # Don't want to run the loop if only one feature left, we'd only be checking accuracy of an empty feature set!
     while len(feature_set) > 1:            
@@ -126,7 +128,7 @@ def backward_elimination():
         best_feature = None
         for feature in feature_set:
             new_accuracy = leave_one_out_accuracy(labels, values, feature_set - {feature})
-            print(f'Using feature(s) {feature_set - {feature}}: accuracy is {round(new_accuracy*100, 2)}%')
+            print(f'Using feature(s) {feature_set - {feature}}: accuracy is {round(new_accuracy*100, 3)}%')
 
             if new_accuracy > best_accuracy:
                 best_accuracy = new_accuracy
@@ -136,12 +138,47 @@ def backward_elimination():
             best_set_accuracy = best_accuracy
             best_feature_set = feature_set - {best_feature}
     
-        print(f'Best feature to remove was {best_feature} with accuracy {round(best_accuracy * 100, 2)}%')
+        print(f'Best feature to remove was {best_feature} with accuracy {round(best_accuracy * 100, 3)}%')
         print('\n')
         feature_set = feature_set - {best_feature}
     
-    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 2)}%')
+    print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 3)}%')
+
+def timing_datasets():
+    small_dataset = 'CS170_Small_Data__39.txt'
+    large_dataset = 'CS170_Large_Data__11.txt'
+    times = {}
+
+    global labels, values, total_features
+    labels, values = read_file(small_dataset)
+    total_features = len(values[0])
+
+    small_dataset_start_fs = time.time()
+    forward_selection()
+    small_dataset_time_fs = time.time() - small_dataset_start_fs
+    times['small_fs'] = round(small_dataset_time_fs, 2)
+
+    small_dataset_start_be = time.time()
+    backward_elimination()
+    small_dataset_time_be = time.time() - small_dataset_start_be
+    times['small_be'] = round(small_dataset_time_be, 2)
+
+    labels, values = read_file(large_dataset)
+    total_features = len(values[0])
+
+    large_start_fs = time.time()
+    forward_selection()
+    large_time_fs = time.time() - large_start_fs
+    times['large_fs'] = round(large_time_fs, 2)
+
+    large_start_be = time.time()
+    backward_elimination()
+    large_time_be = time.time() - large_start_be
+    times['large_be'] = round(large_time_be, 2)
+
+    print(times)
+    with open('dataset_times.json', 'w') as f:
+        json.dump(times, f)
 
 
 main()
-
