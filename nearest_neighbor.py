@@ -49,13 +49,23 @@ def main():
 
 def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
     num_correct = 0
+    # "Cache" updated row values with only the features needed
+    curr_values = []
+    for row in values:
+        curr_row = []
+        for ind in range(len(row)):
+            if (ind + 1 in features) or (ind + 1) == feature_to_add:
+                curr_row.append(row[ind])
+        curr_values.append(np.array(curr_row))
+    
+    
     for i in range(len(values)):
         # Get the values and the actual label for the current point i
-        vec_i = values[i]
+        vec_i = curr_values[i]
         
         # Get the features in use out of vector i (instead of all features)
-        vec_i = [vec_i[ind] for ind in range(len(vec_i)) if (ind+1 in features or ind+1 == feature_to_add)]
-        vec_i = np.array(vec_i)
+        # vec_i = [vec_i[ind] for ind in range(len(vec_i)) if (ind+1 in features or ind+1 == feature_to_add)]
+        # vec_i = np.array(vec_i)
 
         label_i = labels[i]
 
@@ -66,11 +76,11 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
             if i == j:
                 # Avoid repeating the same data point
                 continue
-            vec_j = values[j]
+            vec_j = curr_values[j]
 
             # Get the features in use for vector j
-            vec_j = [vec_j[ind] for ind in range(len(vec_j)) if (ind+1 in features or ind+1 == feature_to_add)]
-            vec_j = np.array(vec_j)
+            # vec_j = [vec_j[ind] for ind in range(len(vec_j)) if (ind+1 in features or ind+1 == feature_to_add)]
+            # vec_j = np.array(vec_j)
 
             # Euclidean distance between vec_i and vec_j
             distance = np.linalg.norm(vec_i - vec_j)
@@ -127,8 +137,9 @@ def backward_elimination():
         best_accuracy = float('-inf')
         best_feature = None
         for feature in feature_set:
-            new_accuracy = leave_one_out_accuracy(labels, values, feature_set - {feature})
-            print(f'Using feature(s) {feature_set - {feature}}: accuracy is {round(new_accuracy*100, 3)}%')
+            updated_feature_set = feature_set - {feature}
+            new_accuracy = leave_one_out_accuracy(labels, values, updated_feature_set)
+            print(f'Using feature(s) {updated_feature_set}: accuracy is {round(new_accuracy*100, 3)}%')
 
             if new_accuracy > best_accuracy:
                 best_accuracy = new_accuracy
@@ -140,7 +151,7 @@ def backward_elimination():
     
         print(f'Best feature to remove was {best_feature} with accuracy {round(best_accuracy * 100, 3)}%')
         print('\n')
-        feature_set = feature_set - {best_feature}
+        feature_set.remove(best_feature)
     
     print(f'Finished search! Best feature set was {best_feature_set} with accuracy {round(best_set_accuracy * 100, 3)}%')
 
@@ -153,10 +164,10 @@ def timing_datasets():
     labels, values = read_file(small_dataset)
     total_features = len(values[0])
 
-    small_dataset_start_fs = time.time()
-    forward_selection()
-    small_dataset_time_fs = time.time() - small_dataset_start_fs
-    times['small_fs'] = round(small_dataset_time_fs, 2)
+    # small_dataset_start_fs = time.time()
+    # forward_selection()
+    # small_dataset_time_fs = time.time() - small_dataset_start_fs
+    # times['small_fs'] = round(small_dataset_time_fs, 2)
 
     small_dataset_start_be = time.time()
     backward_elimination()
@@ -166,19 +177,19 @@ def timing_datasets():
     labels, values = read_file(large_dataset)
     total_features = len(values[0])
 
-    large_start_fs = time.time()
-    forward_selection()
-    large_time_fs = time.time() - large_start_fs
-    times['large_fs'] = round(large_time_fs, 2)
+    # large_start_fs = time.time()
+    # forward_selection()
+    # large_time_fs = time.time() - large_start_fs
+    # times['large_fs'] = round(large_time_fs, 2)
 
-    large_start_be = time.time()
-    backward_elimination()
-    large_time_be = time.time() - large_start_be
-    times['large_be'] = round(large_time_be, 2)
+    # large_start_be = time.time()
+    # backward_elimination()
+    # large_time_be = time.time() - large_start_be
+    # times['large_be'] = round(large_time_be, 2)
 
     print(times)
-    with open('dataset_times.json', 'w') as f:
-        json.dump(times, f)
+    # with open('dataset_time_large_be.json', 'w') as f:
+    #     json.dump(times, f)
 
 
-main()
+timing_datasets()
