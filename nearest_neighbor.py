@@ -62,11 +62,6 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
     for i in range(len(values)):
         # Get the values and the actual label for the current point i
         vec_i = curr_values[i]
-        
-        # Get the features in use out of vector i (instead of all features)
-        # vec_i = [vec_i[ind] for ind in range(len(vec_i)) if (ind+1 in features or ind+1 == feature_to_add)]
-        # vec_i = np.array(vec_i)
-
         label_i = labels[i]
 
         nearest_neighbor_index = None
@@ -78,10 +73,6 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
                 continue
             vec_j = curr_values[j]
 
-            # Get the features in use for vector j
-            # vec_j = [vec_j[ind] for ind in range(len(vec_j)) if (ind+1 in features or ind+1 == feature_to_add)]
-            # vec_j = np.array(vec_j)
-
             # Euclidean distance between vec_i and vec_j
             distance = np.linalg.norm(vec_i - vec_j)
             if distance < nearest_neighbor_val:
@@ -92,7 +83,6 @@ def leave_one_out_accuracy(labels, values, features, feature_to_add=None):
         if predict_label == label_i:
             num_correct += 1
     
-    # return random.random()
     return num_correct / len(values)
 
 def forward_selection():
