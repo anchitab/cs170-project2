@@ -1,0 +1,38 @@
+Feature set {1, 2, 3, 4, 5, 6} has accuracy 82.0%
+Using feature(s) {2, 3, 4, 5, 6}: accuracy is 84.4%
+Using feature(s) {1, 3, 4, 5, 6}: accuracy is 83.4%
+Using feature(s) {1, 2, 4, 5, 6}: accuracy is 77.2%
+Using feature(s) {1, 2, 3, 5, 6}: accuracy is 82.4%
+Using feature(s) {1, 2, 3, 4, 6}: accuracy is 82.4%
+Using feature(s) {1, 2, 3, 4, 5}: accuracy is 70.4%
+Best feature to remove was 1 with accuracy 84.4%
+
+
+Using feature(s) {3, 4, 5, 6}: accuracy is 86.6%
+Using feature(s) {2, 4, 5, 6}: accuracy is 78.4%
+Using feature(s) {2, 3, 5, 6}: accuracy is 85.0%
+Using feature(s) {2, 3, 4, 6}: accuracy is 86.2%
+Using feature(s) {2, 3, 4, 5}: accuracy is 68.6%
+Best feature to remove was 2 with accuracy 86.6%
+
+
+Using feature(s) {4, 5, 6}: accuracy is 78.2%
+Using feature(s) {3, 5, 6}: accuracy is 90.4%
+Using feature(s) {3, 4, 6}: accuracy is 91.4%
+Using feature(s) {3, 4, 5}: accuracy is 70.8%
+Best feature to remove was 5 with accuracy 91.4%
+
+
+Using feature(s) {4, 6}: accuracy is 82.2%
+Using feature(s) {3, 6}: accuracy is 95.8%
+Using feature(s) {3, 4}: accuracy is 73.6%
+Best feature to remove was 4 with accuracy 95.8%
+
+
+Using feature(s) {6}: accuracy is 85.6%
+Using feature(s) {3}: accuracy is 75.6%
+Best feature to remove was 3 with accuracy 85.6%
+
+
+Finished search! Best feature set was {3, 6} with accuracy 95.8%
+{'small_be': 33.93}

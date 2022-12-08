@@ -192,4 +192,4 @@ def timing_datasets():
     #     json.dump(times, f)
 
 
-timing_datasets()
+main()
